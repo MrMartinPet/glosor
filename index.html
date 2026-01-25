@@ -707,20 +707,28 @@
         `;
 
         card.onclick = () => {
-          const rev = card.dataset.revealed === "1";
-          card.dataset.revealed = rev ? "0" : "1";
-          card.classList.toggle("revealed", !rev);
+  const rev = card.dataset.revealed === "1";
+  const nowReveal = !rev; // true = vi byter till baksidan
 
-          const t = !rev ? backText : frontText;
-          const tag = !rev ? tagBack : tagFront;
-          card.querySelector(".txt").textContent = t;
-          card.querySelector(".tag").textContent = tag;
+  card.dataset.revealed = nowReveal ? "1" : "0";
+  card.classList.toggle("revealed", nowReveal);
 
-          // Optional: speak in meaning mode to reinforce
-          if(screen===Screens.SWE && mode===Modes.MEANING){
-            speak(item.sv, "sv-SE");
-          }
-        };
+  const t = nowReveal ? backText : frontText;
+  const tag = nowReveal ? tagBack : tagFront;
+  card.querySelector(".txt").textContent = t;
+  card.querySelector(".tag").textContent = tag;
+
+  // NYTT: I engelska ordlistan – när man vänder till engelska, läs upp ordet
+  if(screen===Screens.ENG && mode===Modes.LIST && nowReveal){
+    speak(item.en, "en-US");
+  }
+
+  // (Behåll svensk "Betydelse"-ljud som innan)
+  if(screen===Screens.SWE && mode===Modes.MEANING){
+    speak(item.sv, "sv-SE");
+  }
+};
+
 
         listGrid.appendChild(card);
       });
