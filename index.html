@@ -1,0 +1,945 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>Glosträning</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --txt:#0b1220;
+      --muted:#5a6b84;
+      --ok:#1a7f5a;
+      --bad:#b42318;
+      --line:#e7ecf5;
+      --shadow: 0 10px 24px rgba(11,18,32,.08);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
+      background:var(--bg);
+      color:var(--txt);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overscroll-behavior:none;
+    }
+
+    /* iPhone 11 friendly: no scroll (fits 414x896), safe areas */
+    .app{
+      height:100vh;
+      padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-width: 430px; /* close to iPhone 11 width */
+      margin: 0 auto;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 6px 0 6px;
+    }
+    .title{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .seg{
+      display:flex;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:4px;
+      box-shadow: var(--shadow);
+      gap:4px;
+    }
+    .seg button{
+      border:0;
+      background:transparent;
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:700;
+      color:var(--muted);
+      cursor:pointer;
+      min-width: 108px;
+    }
+    .seg button.active{
+      background:#0b1220;
+      color:#fff;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow: var(--shadow);
+      padding:14px;
+      flex: 1 1 auto;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-height: 0; /* for internal layout */
+    }
+
+    .modeRow{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .pillRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background:#f8faff;
+      color:var(--muted);
+      padding:7px 10px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:12px;
+    }
+    .pill strong{color:var(--txt)}
+    .bigPrompt{
+      font-size:26px;
+      font-weight:900;
+      text-align:center;
+      padding:10px 8px;
+      border-radius:14px;
+      background:#f8faff;
+      border:1px dashed var(--line);
+      user-select:none;
+    }
+
+    .inputRow{
+      display:flex;
+      gap:10px;
+      align-items:stretch;
+    }
+    input{
+      flex:1;
+      font-size:22px;
+      padding:14px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      outline:none;
+      background:#fff;
+      font-weight:800;
+      letter-spacing:.3px;
+
+      /* anti-"help" */
+      -webkit-text-size-adjust:100%;
+    }
+    input:focus{border-color:#0b1220}
+
+    .btnGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .btn{
+      border:0;
+      border-radius:16px;
+      padding:14px 12px;
+      font-weight:900;
+      font-size:16px;
+      cursor:pointer;
+      background:#0b1220;
+      color:#fff;
+      box-shadow: var(--shadow);
+    }
+    .btn.secondary{
+      background:#ffffff;
+      color:#0b1220;
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn.ghost{
+      background:#f8faff;
+      color:#0b1220;
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .status{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fbfcff;
+      font-weight:800;
+      color:var(--muted);
+      user-select:none;
+    }
+    .status .left{display:flex; gap:10px; align-items:center;}
+    .dot{
+      width:10px;height:10px;border-radius:999px;background:var(--muted);
+    }
+    .dot.ok{background:var(--ok)}
+    .dot.bad{background:var(--bad)}
+
+    /* Result overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background:rgba(11,18,32,.5);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .overlay.show{display:flex;}
+    .modal{
+      width:min(430px, 100%);
+      background:var(--card);
+      border-radius:22px;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-height: 80vh;
+    }
+    .modal h2{
+      margin:0;
+      font-size:18px;
+      font-weight:900;
+    }
+    .list{
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:auto;
+      max-height: 42vh;
+    }
+    .row{
+      padding:10px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      border-top:1px solid var(--line);
+      font-weight:800;
+    }
+    .row:first-child{border-top:0}
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <div class="topbar">
+      <div class="title" id="screenTitle">Engelska</div>
+      <div class="seg" role="tablist" aria-label="Välj del">
+        <button id="tabEng" class="active" type="button">Engelska</button>
+        <button id="tabSwe" type="button">Svenska</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="modeRow">
+        <div class="pillRow" id="modePills"></div>
+        <button class="btn secondary" id="btnReset" type="button">Ny omgång</button>
+      </div>
+
+      <div class="bigPrompt" id="prompt">Tryck “Start”</div>
+
+      <div class="inputRow" id="inputRow">
+        <input
+          id="answer"
+          type="text"
+          placeholder="Skriv svaret"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          inputmode="text"
+        />
+      </div>
+
+      <div class="btnGrid" id="actions"></div>
+
+      <div class="status" id="status">
+        <div class="left"><span class="dot" id="dot"></span><span id="statusText">Redo</span></div>
+        <div><span id="counter">0/0</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal">
+      <h2 id="resultTitle">Resultat</h2>
+      <div class="small" id="resultMeta"></div>
+
+      <div class="list" id="resultList"></div>
+
+      <div class="btnGrid">
+        <button class="btn" id="btnClose" type="button">Stäng</button>
+        <button class="btn secondary" id="btnPlayAgain" type="button">Ny omgång</button>
+      </div>
+
+      <div class="small" id="records"></div>
+    </div>
+  </div>
+
+  <script>
+    /***************
+     * 1) KLIPP IN ORD HÄR (jag fyller detta när du skickar bilderna)
+     ***************/
+    const englishWords = [
+  { sv: "tak", en: "roof" },
+  { sv: "skorsten", en: "chimney" },
+  { sv: "terrass", en: "terrace" },
+  { sv: "balkong", en: "balcony" },
+  { sv: "trädgård", en: "garden" },
+  { sv: "garage", en: "garage" },
+  { sv: "dörr", en: "door" },
+  { sv: "fönster", en: "window" },
+  { sv: "hiss", en: "lift" },
+  { sv: "trappa", en: "stairs" },
+  { sv: "vägg", en: "wall" },
+  { sv: "golv", en: "floor" },
+  { sv: "hall", en: "entrance hall" },
+  { sv: "korridor", en: "hallway" },
+  { sv: "kök", en: "kitchen" },
+  { sv: "vardagsrum", en: "living room" },
+  { sv: "badrum", en: "bathroom" },
+  { sv: "sovrum", en: "bedroom" },
+  { sv: "arbetsrum", en: "study" },
+  { sv: "källare", en: "basement" }
+];
+
+
+    const swedishWords = [
+  { sv: "abborre" },
+  { sv: "alltid" },
+  { sv: "annorlunda" },
+  { sv: "definitivt" },
+  { sv: "egentligen" },
+  { sv: "intresserad" },
+  { sv: "parallell" },
+  { sv: "restaurang" },
+  { sv: "rekommendera" },
+  { sv: "skillnad" },
+  { sv: "kommitté" },
+  { sv: "medicin" },
+  { sv: "tycker" },
+  { sv: "tyvärr" },
+  { sv: "också" },
+  { sv: "nämligen" }
+];
+
+
+    /***************
+     * 2) STATE
+     ***************/
+    const Screens = { ENG:"ENG", SWE:"SWE" };
+    const Modes = { TRAIN:"TRAIN", TEST:"TEST" };
+
+    let screen = Screens.ENG;
+    let mode = Modes.TRAIN;
+
+    let round = [];            // current shuffled items
+    let idx = -1;              // current index
+    let attemptsFirstTryOk = new Map(); // key -> boolean (true if correct on first attempt)
+    let misses = new Map();    // key -> {prompt, correct, wrongs:number}
+    let started = false;
+    let firstAttemptThisWord = true;
+
+    // Records (persist)
+    const LS = {
+      engBest: "glosapp_eng_best",
+      engPerfectCount: "glosapp_eng_perfect_count",
+      sweBest: "glosapp_swe_best",
+      swePerfectCount: "glosapp_swe_perfect_count",
+    };
+
+    /***************
+     * 3) UI ELEMENTS
+     ***************/
+    const tabEng = document.getElementById("tabEng");
+    const tabSwe = document.getElementById("tabSwe");
+    const screenTitle = document.getElementById("screenTitle");
+
+    const modePills = document.getElementById("modePills");
+    const btnReset = document.getElementById("btnReset");
+
+    const promptEl = document.getElementById("prompt");
+    const answerEl = document.getElementById("answer");
+    const inputRow = document.getElementById("inputRow");
+    const actions = document.getElementById("actions");
+
+    const dot = document.getElementById("dot");
+    const statusText = document.getElementById("statusText");
+    const counter = document.getElementById("counter");
+
+    const overlay = document.getElementById("overlay");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultMeta = document.getElementById("resultMeta");
+    const resultList = document.getElementById("resultList");
+    const btnClose = document.getElementById("btnClose");
+    const btnPlayAgain = document.getElementById("btnPlayAgain");
+    const recordsEl = document.getElementById("records");
+
+    /***************
+     * 4) ANTI-CHEAT (iPhone)
+     ***************/
+    function hardenInput(el){
+      el.setAttribute("autocomplete","off");
+      el.setAttribute("autocapitalize","off");
+      el.setAttribute("autocorrect","off");
+      el.setAttribute("spellcheck","false");
+      el.setAttribute("data-gramm","false");
+      el.setAttribute("data-gramm_editor","false");
+      el.setAttribute("data-enable-grammarly","false");
+    }
+    hardenInput(answerEl);
+
+    // Prevent long-press context menu (copy/paste)
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    // Prevent drag selection
+    document.addEventListener("selectstart", e => e.preventDefault());
+
+    /***************
+     * 5) SOUND BLIPS (WebAudio)
+     ***************/
+    let audioCtx = null;
+    function ensureAudio(){
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if(audioCtx.state === "suspended") audioCtx.resume();
+    }
+    function blip(ok=true){
+      ensureAudio();
+      const t = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+
+      o.type = "sine";
+      o.frequency.setValueAtTime(ok ? 880 : 220, t);
+      o.frequency.exponentialRampToValueAtTime(ok ? 1320 : 160, t + 0.12);
+
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t);
+      o.stop(t + 0.18);
+    }
+
+    /***************
+     * 6) TTS (speechSynthesis)
+     ***************/
+    function speak(text, lang){
+      // iOS: requires user gesture before first speak; ok because buttons.
+      try{
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        u.rate = 0.9;
+        window.speechSynthesis.speak(u);
+      }catch(e){}
+    }
+
+    /***************
+     * 7) HELPERS
+     ***************/
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+    function norm(s){
+      return (s||"")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g," ");
+    }
+    function setStatus(kind, text){
+      dot.className = "dot" + (kind ? (" " + kind) : "");
+      statusText.textContent = text;
+    }
+    function setCounter(){
+      const total = round.length || 0;
+      const at = Math.max(0, idx+1);
+      counter.textContent = `${at}/${total}`;
+    }
+    function currentItem(){
+      return round[idx] || null;
+    }
+    function keyForItem(it){
+      if(screen===Screens.ENG) return `ENG:${it.sv}=>${it.en}`;
+      return `SWE:${it.sv}`;
+    }
+
+    /***************
+     * 8) RENDER MODES & ACTIONS
+     ***************/
+    function renderPills(){
+      modePills.innerHTML = "";
+      if(screen === Screens.ENG){
+        const p1 = document.createElement("span");
+        p1.className = "pill";
+        p1.innerHTML = `Läge: <strong>${mode===Modes.TRAIN ? "Träning" : "Prov"}</strong>`;
+        modePills.appendChild(p1);
+
+        const btnTrain = document.createElement("button");
+        btnTrain.type = "button";
+        btnTrain.className = "pill";
+        btnTrain.style.cursor = "pointer";
+        btnTrain.innerHTML = `Träning`;
+        btnTrain.onclick = () => { mode = Modes.TRAIN; resetRound(); };
+        btnTrain.style.opacity = (mode===Modes.TRAIN ? "1" : ".7");
+
+        const btnTest = document.createElement("button");
+        btnTest.type = "button";
+        btnTest.className = "pill";
+        btnTest.style.cursor = "pointer";
+        btnTest.innerHTML = `Prov`;
+        btnTest.onclick = () => { mode = Modes.TEST; resetRound(); };
+        btnTest.style.opacity = (mode===Modes.TEST ? "1" : ".7");
+
+        modePills.appendChild(btnTrain);
+        modePills.appendChild(btnTest);
+      }else{
+        const p1 = document.createElement("span");
+        p1.className = "pill";
+        p1.innerHTML = `Läge: <strong>Prov</strong>`;
+        modePills.appendChild(p1);
+      }
+    }
+
+    function renderActions(){
+      actions.innerHTML = "";
+
+      // Start button when not started
+      if(!started){
+        const start = document.createElement("button");
+        start.className = "btn";
+        start.type = "button";
+        start.textContent = "Start";
+        start.onclick = () => startRound();
+        actions.appendChild(start);
+
+        const demo = document.createElement("button");
+        demo.className = "btn secondary";
+        demo.type = "button";
+        demo.textContent = "Testa ljud (låser upp)";
+        demo.onclick = () => { blip(true); speak("Hello", "en-US"); };
+        actions.appendChild(demo);
+
+        return;
+      }
+
+      // Common buttons
+      const submit = document.createElement("button");
+      submit.className = "btn";
+      submit.type = "button";
+      submit.textContent = "Rätta";
+      submit.onclick = () => checkAnswer();
+      actions.appendChild(submit);
+
+      if(screen === Screens.ENG){
+        if(mode === Modes.TRAIN){
+          const hint = document.createElement("button");
+          hint.className = "btn secondary";
+          hint.type = "button";
+          hint.textContent = "Ledtråd (2 bokstäver)";
+          hint.onclick = () => showHint();
+          actions.appendChild(hint);
+
+          const listen = document.createElement("button");
+          listen.className = "btn ghost";
+          listen.type = "button";
+          listen.textContent = "Lyssna (engelska)";
+          listen.onclick = () => listenEnglish();
+          actions.appendChild(listen);
+
+          const skip = document.createElement("button");
+          skip.className = "btn ghost";
+          skip.type = "button";
+          skip.textContent = "Nästa (kan inte)";
+          skip.onclick = () => markSkipAndNext();
+          actions.appendChild(skip);
+        }else{
+          // Prov: inga ledtrådar eller ljudfiler.
+          const next = document.createElement("button");
+          next.className = "btn secondary";
+          next.type = "button";
+          next.textContent = "Nästa";
+          next.onclick = () => nextWord();
+          actions.appendChild(next);
+        }
+      }else{
+        // Svenska prov: stor lyssna-knapp + rätta
+        const listenSwe = document.createElement("button");
+        listenSwe.className = "btn secondary";
+        listenSwe.type = "button";
+        listenSwe.textContent = "Lyssna";
+        listenSwe.onclick = () => listenSwedish();
+        actions.appendChild(listenSwe);
+
+        const next = document.createElement("button");
+        next.className = "btn ghost";
+        next.type = "button";
+        next.textContent = "Nästa";
+        next.onclick = () => nextWord();
+        actions.appendChild(next);
+      }
+    }
+
+    function renderPrompt(){
+      if(!started){
+        promptEl.textContent = "Tryck “Start”";
+        return;
+      }
+      const it = currentItem();
+      if(!it) return;
+
+      if(screen === Screens.ENG){
+        // show Swedish word; user types English
+        promptEl.textContent = it.sv;
+        answerEl.placeholder = "Skriv på engelska";
+      }else{
+        // Swedish spelling: show minimal prompt
+        promptEl.textContent = "Stava ordet";
+        answerEl.placeholder = "Skriv på svenska";
+      }
+    }
+
+    /***************
+     * 9) ROUND FLOW
+     ***************/
+    function buildRound(){
+      const source = (screen===Screens.ENG) ? englishWords : swedishWords;
+      round = shuffle(source);
+      idx = 0;
+      attemptsFirstTryOk = new Map();
+      misses = new Map();
+      firstAttemptThisWord = true;
+      setCounter();
+    }
+
+    function resetRound(){
+      started = false;
+      buildRound();
+      setStatus("", "Redo");
+      answerEl.value = "";
+      renderPills();
+      renderActions();
+      renderPrompt();
+      setCounter();
+      hideResults();
+    }
+
+    function startRound(){
+      ensureAudio(); // unlock on iOS
+      started = true;
+      if(round.length === 0) buildRound();
+      idx = 0;
+      firstAttemptThisWord = true;
+      setStatus("", "Skriv och tryck Rätta");
+      answerEl.value = "";
+      answerEl.focus();
+      renderActions();
+      renderPrompt();
+      setCounter();
+      if(screen===Screens.SWE){
+        // Swedish test: encourage listen
+        listenSwedish();
+      }
+    }
+
+    function nextWord(){
+      if(idx >= round.length-1){
+        finishRound();
+        return;
+      }
+      idx += 1;
+      firstAttemptThisWord = true;
+      answerEl.value = "";
+      answerEl.focus();
+      setStatus("", "Skriv och tryck Rätta");
+      renderPrompt();
+      setCounter();
+    }
+
+    function finishRound(){
+      started = false;
+      renderActions();
+      showResults();
+    }
+
+    /***************
+     * 10) ENGLISH TRAINING FEATURES
+     ***************/
+    function showHint(){
+      const it = currentItem();
+      if(!it) return;
+      const two = (it.en || "").slice(0,2);
+      setStatus("", `Ledtråd: ${two.toUpperCase()}...`);
+      // Keep input unchanged
+    }
+
+    function listenEnglish(){
+      const it = currentItem();
+      if(!it) return;
+      speak(it.en, "en-US");
+    }
+
+    function markSkipAndNext(){
+      const it = currentItem();
+      if(!it) return;
+      const k = keyForItem(it);
+      // If skipped, count as not first-try ok, and as miss
+      if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
+      const m = misses.get(k) || { prompt: it.sv, correct: it.en, wrongs: 0 };
+      m.wrongs += 1;
+      misses.set(k, m);
+
+      setStatus("bad", "Hoppad");
+      blip(false);
+      nextWord();
+    }
+
+    /***************
+     * 11) CHECK ANSWER
+     ***************/
+    function checkAnswer(){
+      const it = currentItem();
+      if(!it) return;
+
+      const user = norm(answerEl.value);
+      if(!user){
+        setStatus("bad", "Skriv ett svar");
+        blip(false);
+        return;
+      }
+
+      if(screen === Screens.ENG){
+        const correct = norm(it.en);
+        const k = keyForItem(it);
+
+        if(user === correct){
+          // first-try tracking
+          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, firstAttemptThisWord);
+          setStatus("ok", "Rätt");
+          blip(true);
+
+          // In provläge: read the word after correct answer
+          if(mode === Modes.TEST){
+            speak(it.en, "en-US");
+          }
+          nextWord();
+        }else{
+          // Miss tracking
+          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
+
+          const m = misses.get(k) || { prompt: it.sv, correct: it.en, wrongs: 0 };
+          m.wrongs += 1;
+          misses.set(k, m);
+
+          setStatus("bad", "Fel");
+          blip(false);
+          firstAttemptThisWord = false;
+
+          if(mode === Modes.TRAIN){
+            // In training, allow retry; do not auto-next
+            answerEl.select();
+          }else{
+            // In test, no hints; allow retry or move next; do not auto-next
+            answerEl.select();
+          }
+        }
+      }else{
+        // Swedish spelling test
+        const correct = norm(it.sv);
+        const k = keyForItem(it);
+
+        if(user === correct){
+          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, firstAttemptThisWord);
+          setStatus("ok", "Rätt");
+          blip(true);
+          // Optional: read correct word after correct
+          speak(it.sv, "sv-SE");
+          nextWord();
+        }else{
+          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
+          const m = misses.get(k) || { prompt: "Lyssna och stava", correct: it.sv, wrongs: 0 };
+          m.wrongs += 1;
+          misses.set(k, m);
+
+          setStatus("bad", "Fel");
+          blip(false);
+          firstAttemptThisWord = false;
+          answerEl.select();
+        }
+      }
+    }
+
+    /***************
+     * 12) RESULTS + RECORDS
+     ***************/
+    function getBestKey(){
+      return (screen===Screens.ENG) ? LS.engBest : LS.sweBest;
+    }
+    function getPerfectKey(){
+      return (screen===Screens.ENG) ? LS.engPerfectCount : LS.swePerfectCount;
+    }
+
+    function showResults(){
+      // Summary: which words not correct on first attempt
+      const total = round.length;
+      let firstTryFails = [];
+      for(const it of round){
+        const k = keyForItem(it);
+        const okFirst = attemptsFirstTryOk.get(k) === true;
+        if(!okFirst){
+          if(screen===Screens.ENG){
+            firstTryFails.push({ left: it.sv, right: it.en });
+          }else{
+            firstTryFails.push({ left: it.sv, right: it.sv });
+          }
+        }
+      }
+
+      // Score for record (test mode only for ENG; always for SWE)
+      const isRecordRelevant = (screen===Screens.SWE) || (screen===Screens.ENG && mode===Modes.TEST);
+
+      const wrongCountUnique = firstTryFails.length;
+      const correctFirstTry = total - wrongCountUnique;
+
+      // Update best record (higher correctFirstTry)
+      let best = Number(localStorage.getItem(getBestKey()) || "0");
+      if(isRecordRelevant && correctFirstTry > best){
+        best = correctFirstTry;
+        localStorage.setItem(getBestKey(), String(best));
+      }
+
+      // Perfect tracking (0 fails)
+      const perfect = (wrongCountUnique === 0);
+      if(isRecordRelevant && perfect){
+        const c = Number(localStorage.getItem(getPerfectKey()) || "0") + 1;
+        localStorage.setItem(getPerfectKey(), String(c));
+      }
+
+      // UI
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+
+      const part = (screen===Screens.ENG) ? "Engelska" : "Svenska";
+      const modeTxt = (screen===Screens.ENG) ? (mode===Modes.TRAIN ? "Träning" : "Prov") : "Prov";
+      resultTitle.textContent = `${part} – ${modeTxt}`;
+      resultMeta.textContent = `Klara på första försöket: ${correctFirstTry}/${total}`;
+
+      resultList.innerHTML = "";
+      if(firstTryFails.length === 0){
+        const r = document.createElement("div");
+        r.className = "row";
+        r.innerHTML = `<span>Inga missar 🎉</span><span class="small">Felfritt</span>`;
+        resultList.appendChild(r);
+      }else{
+        for(const x of firstTryFails){
+          const r = document.createElement("div");
+          r.className = "row";
+          r.innerHTML = `<span>${x.left}</span><span class="small">${x.right}</span>`;
+          resultList.appendChild(r);
+        }
+      }
+
+      const bestNow = Number(localStorage.getItem(getBestKey()) || "0");
+      const perfectCount = Number(localStorage.getItem(getPerfectKey()) || "0");
+      const recordLabel = (screen===Screens.ENG && mode===Modes.TRAIN)
+        ? `Rekord visas bara för provläget.`
+        : `Rekord: ${bestNow}/${total} • Felfritt klarat: ${perfectCount} gång(er)`;
+
+      recordsEl.textContent = recordLabel;
+    }
+
+    function hideResults(){
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+    }
+
+    /***************
+     * 13) SWEDISH LISTEN
+     ***************/
+    function listenSwedish(){
+      const it = currentItem();
+      if(!it) return;
+      speak(it.sv, "sv-SE");
+    }
+
+    /***************
+     * 14) EVENTS
+     ***************/
+    tabEng.addEventListener("click", () => {
+      screen = Screens.ENG;
+      mode = Modes.TRAIN;
+      screenTitle.textContent = "Engelska";
+      tabEng.classList.add("active");
+      tabSwe.classList.remove("active");
+      resetRound();
+    });
+
+    tabSwe.addEventListener("click", () => {
+      screen = Screens.SWE;
+      // Only test mode here
+      mode = Modes.TEST;
+      screenTitle.textContent = "Svenska";
+      tabSwe.classList.add("active");
+      tabEng.classList.remove("active");
+      resetRound();
+    });
+
+    btnReset.addEventListener("click", () => resetRound());
+    btnClose.addEventListener("click", () => hideResults());
+    btnPlayAgain.addEventListener("click", () => { hideResults(); resetRound(); startRound(); });
+
+    // Enter to submit
+    answerEl.addEventListener("keydown", (e) => {
+      if(e.key === "Enter"){
+        e.preventDefault();
+        checkAnswer();
+      }
+    });
+
+    // Prevent paste (extra anti-cheat)
+    answerEl.addEventListener("paste", (e) => e.preventDefault());
+
+    // init
+    (function init(){
+      resetRound();
+      // Ensure correct input hardening always
+      hardenInput(answerEl);
+      // Make sure the prompt stays compact for iPhone
+      promptEl.textContent = "Tryck “Start”";
+    })();
+  </script>
+</body>
+</html>
