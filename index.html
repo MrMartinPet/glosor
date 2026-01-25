@@ -12,11 +12,18 @@
       --card:#ffffff;
       --txt:#0b1220;
       --muted:#5a6b84;
-      --ok:#1a7f5a;
-      --bad:#b42318;
       --line:#e7ecf5;
-      --shadow: 0 10px 24px rgba(11,18,32,.08);
+      --shadow:0 10px 24px rgba(11,18,32,.08);
       --r:18px;
+
+      --primary:#3b82f6;
+      --primary2:#2563eb;
+      --ok:#22c55e;
+      --bad:#ef4444;
+      --soft:#eef2ff;
+      --soft2:#f1f5f9;
+      --amber:#f59e0b;
+      --teal:#10b981;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -25,20 +32,17 @@
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,Helvetica,sans-serif;
       background:var(--bg);
       color:var(--txt);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
       overscroll-behavior:none;
     }
 
-    /* iPhone 11 friendly: no scroll (fits 414x896), safe areas */
     .app{
       height:100vh;
       padding: env(safe-area-inset-top) 14px env(safe-area-inset-bottom) 14px;
       display:flex;
       flex-direction:column;
       gap:12px;
-      max-width: 430px; /* close to iPhone 11 width */
-      margin: 0 auto;
+      max-width:430px;
+      margin:0 auto;
     }
 
     .topbar{
@@ -48,18 +52,15 @@
       gap:10px;
       padding:10px 6px 0 6px;
     }
-    .title{
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:.2px;
-    }
+    .title{font-size:18px;font-weight:900;letter-spacing:.2px}
+
     .seg{
       display:flex;
       background:var(--card);
       border:1px solid var(--line);
       border-radius:999px;
       padding:4px;
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       gap:4px;
     }
     .seg button{
@@ -67,27 +68,28 @@
       background:transparent;
       padding:8px 12px;
       border-radius:999px;
-      font-weight:700;
+      font-weight:900;
       color:var(--muted);
       cursor:pointer;
-      min-width: 108px;
+      min-width:108px;
     }
     .seg button.active{
-      background:#0b1220;
+      background:var(--primary);
       color:#fff;
+      box-shadow:0 8px 18px rgba(59,130,246,.25);
     }
 
     .card{
       background:var(--card);
       border:1px solid var(--line);
       border-radius:var(--r);
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       padding:14px;
-      flex: 1 1 auto;
+      flex:1 1 auto;
       display:flex;
       flex-direction:column;
       gap:12px;
-      min-height: 0; /* for internal layout */
+      min-height:0;
     }
 
     .modeRow{
@@ -96,37 +98,46 @@
       align-items:center;
       justify-content:space-between;
     }
-    .pillRow{
+    .modeBtns{
       display:flex;
       gap:8px;
+      align-items:center;
       flex-wrap:wrap;
     }
-    .pill{
+    .modeBtn{
       border:1px solid var(--line);
-      background:#f8faff;
-      color:var(--muted);
-      padding:7px 10px;
-      border-radius:999px;
-      font-weight:700;
-      font-size:12px;
+      background:var(--soft);
+      color:var(--primary2);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
     }
-    .pill strong{color:var(--txt)}
+    .modeBtn.active{
+      background:var(--primary);
+      color:#fff;
+      border-color:transparent;
+      box-shadow:0 10px 22px rgba(59,130,246,.25);
+      transform:translateY(-1px);
+    }
+
     .bigPrompt{
       font-size:26px;
-      font-weight:900;
+      font-weight:1000;
       text-align:center;
       padding:10px 8px;
       border-radius:14px;
-      background:#f8faff;
+      background:var(--soft2);
       border:1px dashed var(--line);
       user-select:none;
+      min-height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .inputRow{
-      display:flex;
-      gap:10px;
-      align-items:stretch;
-    }
+    .inputRow{display:flex;gap:10px;align-items:stretch}
     input{
       flex:1;
       font-size:22px;
@@ -135,45 +146,48 @@
       border:1px solid var(--line);
       outline:none;
       background:#fff;
-      font-weight:800;
-      letter-spacing:.3px;
-
-      /* anti-"help" */
+      font-weight:950;
+      letter-spacing:.2px;
       -webkit-text-size-adjust:100%;
     }
-    input:focus{border-color:#0b1220}
+    input:focus{border-color:var(--primary)}
 
     .btnGrid{
       display:grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns:1fr 1fr;
       gap:10px;
     }
     .btn{
       border:0;
       border-radius:16px;
       padding:14px 12px;
-      font-weight:900;
+      font-weight:950;
       font-size:16px;
       cursor:pointer;
-      background:#0b1220;
+      background:var(--primary);
       color:#fff;
-      box-shadow: var(--shadow);
+      box-shadow:0 12px 24px rgba(59,130,246,.22);
+      user-select:none;
     }
+    .btn:active{transform:translateY(1px)}
     .btn.secondary{
-      background:#ffffff;
-      color:#0b1220;
+      background:#fff;
+      color:var(--primary2);
       border:1px solid var(--line);
       box-shadow:none;
     }
     .btn.ghost{
-      background:#f8faff;
-      color:#0b1220;
+      background:var(--soft);
+      color:var(--primary2);
       border:1px solid var(--line);
       box-shadow:none;
     }
-    .btn:disabled{
-      opacity:.55;
-      cursor:not-allowed;
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+    /* Hint flip-card */
+    .btn.hintOn{
+      background:var(--teal);
+      box-shadow:0 12px 24px rgba(16,185,129,.22);
     }
 
     .status{
@@ -185,18 +199,60 @@
       border-radius:14px;
       border:1px solid var(--line);
       background:#fbfcff;
-      font-weight:800;
+      font-weight:900;
       color:var(--muted);
       user-select:none;
     }
-    .status .left{display:flex; gap:10px; align-items:center;}
-    .dot{
-      width:10px;height:10px;border-radius:999px;background:var(--muted);
-    }
+    .status .left{display:flex;gap:10px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:999px;background:var(--muted)}
     .dot.ok{background:var(--ok)}
     .dot.bad{background:var(--bad)}
 
-    /* Result overlay */
+    /* Lists / flashcards */
+    .listWrap{
+      flex:1 1 auto;
+      min-height:0;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px;
+      background:#fbfcff;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    .flash{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:14px;
+      box-shadow:0 8px 18px rgba(11,18,32,.06);
+      cursor:pointer;
+      user-select:none;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      font-weight:950;
+      font-size:18px;
+    }
+    .flash .tag{
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      background:var(--soft);
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      white-space:nowrap;
+    }
+    .flash.revealed{
+      border-color:#c7ddff;
+      background:#f8fbff;
+    }
+
     .overlay{
       position:fixed;
       inset:0;
@@ -206,29 +262,27 @@
       justify-content:center;
       padding:18px;
     }
-    .overlay.show{display:flex;}
+    .overlay.show{display:flex}
     .modal{
-      width:min(430px, 100%);
+      width:min(430px,100%);
       background:var(--card);
       border-radius:22px;
       border:1px solid var(--line);
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       padding:16px;
       display:flex;
       flex-direction:column;
       gap:12px;
-      max-height: 80vh;
+      max-height:80vh;
     }
-    .modal h2{
-      margin:0;
-      font-size:18px;
-      font-weight:900;
-    }
-    .list{
+    .modal h2{margin:0;font-size:18px;font-weight:1000}
+    .small{font-size:12px;color:var(--muted);font-weight:900}
+    .missList{
       border:1px solid var(--line);
       border-radius:16px;
       overflow:auto;
-      max-height: 42vh;
+      max-height:42vh;
+      background:#fbfcff;
     }
     .row{
       padding:10px 12px;
@@ -236,21 +290,16 @@
       justify-content:space-between;
       gap:12px;
       border-top:1px solid var(--line);
-      font-weight:800;
+      font-weight:950;
     }
     .row:first-child{border-top:0}
-    .small{
-      font-size:12px;
-      color:var(--muted);
-      font-weight:800;
-    }
   </style>
 </head>
 <body>
-  <div class="app" id="app">
+  <div class="app">
     <div class="topbar">
       <div class="title" id="screenTitle">Engelska</div>
-      <div class="seg" role="tablist" aria-label="Välj del">
+      <div class="seg" role="tablist">
         <button id="tabEng" class="active" type="button">Engelska</button>
         <button id="tabSwe" type="button">Svenska</button>
       </div>
@@ -258,11 +307,11 @@
 
     <div class="card">
       <div class="modeRow">
-        <div class="pillRow" id="modePills"></div>
+        <div class="modeBtns" id="modeBtns"></div>
         <button class="btn secondary" id="btnReset" type="button">Ny omgång</button>
       </div>
 
-      <div class="bigPrompt" id="prompt">Tryck “Start”</div>
+      <div class="bigPrompt" id="prompt"></div>
 
       <div class="inputRow" id="inputRow">
         <input
@@ -277,10 +326,14 @@
         />
       </div>
 
+      <div id="listArea" class="listWrap" style="display:none;">
+        <div class="grid" id="listGrid"></div>
+      </div>
+
       <div class="btnGrid" id="actions"></div>
 
-      <div class="status" id="status">
-        <div class="left"><span class="dot" id="dot"></span><span id="statusText">Redo</span></div>
+      <div class="status">
+        <div class="left"><span class="dot" id="dot"></span><span id="statusText"></span></div>
         <div><span id="counter">0/0</span></div>
       </div>
     </div>
@@ -290,83 +343,82 @@
     <div class="modal">
       <h2 id="resultTitle">Resultat</h2>
       <div class="small" id="resultMeta"></div>
-
-      <div class="list" id="resultList"></div>
-
+      <div class="missList" id="resultList"></div>
       <div class="btnGrid">
         <button class="btn" id="btnClose" type="button">Stäng</button>
         <button class="btn secondary" id="btnPlayAgain" type="button">Ny omgång</button>
       </div>
-
       <div class="small" id="records"></div>
     </div>
   </div>
 
   <script>
     /***************
-     * 1) KLIPP IN ORD HÄR (jag fyller detta när du skickar bilderna)
+     * ORD (från dina bilder)
      ***************/
     const englishWords = [
-  { sv: "tak", en: "roof" },
-  { sv: "skorsten", en: "chimney" },
-  { sv: "terrass", en: "terrace" },
-  { sv: "balkong", en: "balcony" },
-  { sv: "trädgård", en: "garden" },
-  { sv: "garage", en: "garage" },
-  { sv: "dörr", en: "door" },
-  { sv: "fönster", en: "window" },
-  { sv: "hiss", en: "lift" },
-  { sv: "trappa", en: "stairs" },
-  { sv: "vägg", en: "wall" },
-  { sv: "golv", en: "floor" },
-  { sv: "hall", en: "entrance hall" },
-  { sv: "korridor", en: "hallway" },
-  { sv: "kök", en: "kitchen" },
-  { sv: "vardagsrum", en: "living room" },
-  { sv: "badrum", en: "bathroom" },
-  { sv: "sovrum", en: "bedroom" },
-  { sv: "arbetsrum", en: "study" },
-  { sv: "källare", en: "basement" }
-];
+      { sv: "tak", en: "roof" },
+      { sv: "skorsten", en: "chimney" },
+      { sv: "terrass", en: "terrace" },
+      { sv: "balkong", en: "balcony" },
+      { sv: "trädgård", en: "garden" },
+      { sv: "garage", en: "garage" },
+      { sv: "dörr", en: "door" },
+      { sv: "fönster", en: "window" },
+      { sv: "hiss", en: "lift" },
+      { sv: "trappa", en: "stairs" },
+      { sv: "vägg", en: "wall" },
+      { sv: "golv", en: "floor" },
+      { sv: "hall", en: "entrance hall" },
+      { sv: "korridor", en: "hallway" },
+      { sv: "kök", en: "kitchen" },
+      { sv: "vardagsrum", en: "living room" },
+      { sv: "badrum", en: "bathroom" },
+      { sv: "sovrum", en: "bedroom" },
+      { sv: "arbetsrum", en: "study" },
+      { sv: "källare", en: "basement" }
+    ];
 
-
+    // Betydelserna är korta och barnvänliga – kan justeras om du vill.
     const swedishWords = [
-  { sv: "abborre" },
-  { sv: "alltid" },
-  { sv: "annorlunda" },
-  { sv: "definitivt" },
-  { sv: "egentligen" },
-  { sv: "intresserad" },
-  { sv: "parallell" },
-  { sv: "restaurang" },
-  { sv: "rekommendera" },
-  { sv: "skillnad" },
-  { sv: "kommitté" },
-  { sv: "medicin" },
-  { sv: "tycker" },
-  { sv: "tyvärr" },
-  { sv: "också" },
-  { sv: "nämligen" }
-];
-
+      { sv: "abborre", meaning: "en fisk" },
+      { sv: "alltid", meaning: "varje gång" },
+      { sv: "annorlunda", meaning: "inte som vanligt" },
+      { sv: "definitivt", meaning: "helt säkert" },
+      { sv: "egentligen", meaning: "i själva verket" },
+      { sv: "intresserad", meaning: "nyfiken på, vill veta mer" },
+      { sv: "parallell", meaning: "bredvid och i samma riktning" },
+      { sv: "restaurang", meaning: "ställe där man kan äta mat" },
+      { sv: "rekommendera", meaning: "tipsa, säga att något är bra" },
+      { sv: "skillnad", meaning: "det som gör att det inte är samma" },
+      { sv: "kommitté", meaning: "en liten grupp som bestämmer något" },
+      { sv: "medicin", meaning: "något man tar när man är sjuk" },
+      { sv: "tycker", meaning: "har en åsikt" },
+      { sv: "tyvärr", meaning: "tråkigt nog" },
+      { sv: "också", meaning: "även" },
+      { sv: "nämligen", meaning: "för att… (en förklaring)" }
+    ];
 
     /***************
-     * 2) STATE
+     * STATE
      ***************/
     const Screens = { ENG:"ENG", SWE:"SWE" };
-    const Modes = { TRAIN:"TRAIN", TEST:"TEST" };
+    const Modes = { LIST:"LIST", TRAIN:"TRAIN", TEST:"TEST", MEANING:"MEANING" };
 
     let screen = Screens.ENG;
     let mode = Modes.TRAIN;
 
-    let round = [];            // current shuffled items
-    let idx = -1;              // current index
-    let attemptsFirstTryOk = new Map(); // key -> boolean (true if correct on first attempt)
-    let misses = new Map();    // key -> {prompt, correct, wrongs:number}
+    let round = [];
+    let idx = -1;
+    let attemptsFirstTryOk = new Map();
+    let misses = new Map();
     let started = false;
     let firstAttemptThisWord = true;
 
-    // Records (persist)
+    // Hint flip state (english training)
+    let hintState = { on:false, text:"" };
+
+    // Records
     const LS = {
       engBest: "glosapp_eng_best",
       engPerfectCount: "glosapp_eng_perfect_count",
@@ -375,23 +427,22 @@
     };
 
     /***************
-     * 3) UI ELEMENTS
+     * UI
      ***************/
     const tabEng = document.getElementById("tabEng");
     const tabSwe = document.getElementById("tabSwe");
     const screenTitle = document.getElementById("screenTitle");
-
-    const modePills = document.getElementById("modePills");
+    const modeBtns = document.getElementById("modeBtns");
     const btnReset = document.getElementById("btnReset");
-
     const promptEl = document.getElementById("prompt");
     const answerEl = document.getElementById("answer");
     const inputRow = document.getElementById("inputRow");
     const actions = document.getElementById("actions");
-
     const dot = document.getElementById("dot");
     const statusText = document.getElementById("statusText");
     const counter = document.getElementById("counter");
+    const listArea = document.getElementById("listArea");
+    const listGrid = document.getElementById("listGrid");
 
     const overlay = document.getElementById("overlay");
     const resultTitle = document.getElementById("resultTitle");
@@ -402,7 +453,7 @@
     const recordsEl = document.getElementById("records");
 
     /***************
-     * 4) ANTI-CHEAT (iPhone)
+     * ANTI-CHEAT
      ***************/
     function hardenInput(el){
       el.setAttribute("autocomplete","off");
@@ -414,20 +465,16 @@
       el.setAttribute("data-enable-grammarly","false");
     }
     hardenInput(answerEl);
-
-    // Prevent long-press context menu (copy/paste)
     document.addEventListener("contextmenu", e => e.preventDefault());
-    // Prevent drag selection
     document.addEventListener("selectstart", e => e.preventDefault());
+    answerEl.addEventListener("paste", e => e.preventDefault());
 
     /***************
-     * 5) SOUND BLIPS (WebAudio)
+     * AUDIO BLIPS
      ***************/
     let audioCtx = null;
     function ensureAudio(){
-      if(!audioCtx){
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
+      if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if(audioCtx.state === "suspended") audioCtx.resume();
     }
     function blip(ok=true){
@@ -435,25 +482,21 @@
       const t = audioCtx.currentTime;
       const o = audioCtx.createOscillator();
       const g = audioCtx.createGain();
-
       o.type = "sine";
       o.frequency.setValueAtTime(ok ? 880 : 220, t);
       o.frequency.exponentialRampToValueAtTime(ok ? 1320 : 160, t + 0.12);
-
       g.gain.setValueAtTime(0.0001, t);
       g.gain.exponentialRampToValueAtTime(0.18, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
-
       o.connect(g).connect(audioCtx.destination);
       o.start(t);
       o.stop(t + 0.18);
     }
 
     /***************
-     * 6) TTS (speechSynthesis)
+     * TTS
      ***************/
     function speak(text, lang){
-      // iOS: requires user gesture before first speak; ok because buttons.
       try{
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
@@ -462,9 +505,10 @@
         window.speechSynthesis.speak(u);
       }catch(e){}
     }
+    const delay = ms => new Promise(r => setTimeout(r, ms));
 
     /***************
-     * 7) HELPERS
+     * HELPERS
      ***************/
     function shuffle(arr){
       const a = arr.slice();
@@ -474,70 +518,225 @@
       }
       return a;
     }
-    function norm(s){
-      return (s||"")
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g," ");
-    }
+    function norm(s){ return (s||"").trim().toLowerCase().replace(/\s+/g," "); }
     function setStatus(kind, text){
       dot.className = "dot" + (kind ? (" " + kind) : "");
-      statusText.textContent = text;
+      statusText.textContent = text || "";
     }
     function setCounter(){
       const total = round.length || 0;
-      const at = Math.max(0, idx+1);
+      const at = started ? Math.max(0, idx+1) : 0;
       counter.textContent = `${at}/${total}`;
     }
-    function currentItem(){
-      return round[idx] || null;
-    }
+    function currentItem(){ return round[idx] || null; }
     function keyForItem(it){
       if(screen===Screens.ENG) return `ENG:${it.sv}=>${it.en}`;
       return `SWE:${it.sv}`;
     }
 
     /***************
-     * 8) RENDER MODES & ACTIONS
+     * MODES AVAILABLE
      ***************/
-    function renderPills(){
-      modePills.innerHTML = "";
-      if(screen === Screens.ENG){
-        const p1 = document.createElement("span");
-        p1.className = "pill";
-        p1.innerHTML = `Läge: <strong>${mode===Modes.TRAIN ? "Träning" : "Prov"}</strong>`;
-        modePills.appendChild(p1);
+    function getModesForScreen(scr){
+      if(scr === Screens.ENG) return [Modes.LIST, Modes.TRAIN, Modes.TEST];
+      return [Modes.MEANING, Modes.TEST];
+    }
+    function labelForMode(m){
+      if(m===Modes.LIST) return "Ordlista";
+      if(m===Modes.TRAIN) return "Träning";
+      if(m===Modes.TEST) return "Prov";
+      if(m===Modes.MEANING) return "Betydelse";
+      return m;
+    }
 
-        const btnTrain = document.createElement("button");
-        btnTrain.type = "button";
-        btnTrain.className = "pill";
-        btnTrain.style.cursor = "pointer";
-        btnTrain.innerHTML = `Träning`;
-        btnTrain.onclick = () => { mode = Modes.TRAIN; resetRound(); };
-        btnTrain.style.opacity = (mode===Modes.TRAIN ? "1" : ".7");
+    /***************
+     * BUILD / RESET
+     ***************/
+    function buildRound(){
+      const source = (screen===Screens.ENG) ? englishWords : swedishWords;
+      round = shuffle(source);
+      idx = 0;
+      attemptsFirstTryOk = new Map();
+      misses = new Map();
+      firstAttemptThisWord = true;
+      hintState = { on:false, text:"" };
+      setCounter();
+    }
 
-        const btnTest = document.createElement("button");
-        btnTest.type = "button";
-        btnTest.className = "pill";
-        btnTest.style.cursor = "pointer";
-        btnTest.innerHTML = `Prov`;
-        btnTest.onclick = () => { mode = Modes.TEST; resetRound(); };
-        btnTest.style.opacity = (mode===Modes.TEST ? "1" : ".7");
+    function resetRound(){
+      started = false;
+      buildRound();
+      answerEl.value = "";
+      setStatus("", "");
+      hideResults();
+      renderModes();
+      renderView();
+    }
 
-        modePills.appendChild(btnTrain);
-        modePills.appendChild(btnTest);
-      }else{
-        const p1 = document.createElement("span");
-        p1.className = "pill";
-        p1.innerHTML = `Läge: <strong>Prov</strong>`;
-        modePills.appendChild(p1);
+    function startRound(){
+      ensureAudio(); // unlock iOS audio/TTS
+      started = true;
+      if(round.length === 0) buildRound();
+      idx = 0;
+      firstAttemptThisWord = true;
+      hintState = { on:false, text:"" };
+      answerEl.value = "";
+      setStatus("", "");
+      renderView();
+      answerEl.focus();
+
+      // Swedish TEST: speak current word once at start (same as pressing Lyssna)
+      if(screen===Screens.SWE && mode===Modes.TEST){
+        listenSwedish();
       }
+    }
+
+    function nextWord(){
+      if(idx >= round.length-1){
+        finishRound();
+        return false;
+      }
+      idx += 1;
+      firstAttemptThisWord = true;
+      hintState = { on:false, text:"" };
+      answerEl.value = "";
+      setStatus("", "");
+      renderView();
+      answerEl.focus();
+      return true;
+    }
+
+    function finishRound(){
+      started = false;
+      renderView();
+      showResults(); // only meaningful for TRAIN/TEST; harmless otherwise
+    }
+
+    /***************
+     * RENDER
+     ***************/
+    function renderModes(){
+      modeBtns.innerHTML = "";
+      const modes = getModesForScreen(screen);
+
+      modes.forEach(m => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "modeBtn" + (mode===m ? " active" : "");
+        b.textContent = labelForMode(m);
+        b.onclick = () => {
+          mode = m;
+          resetRound();
+        };
+        modeBtns.appendChild(b);
+      });
+    }
+
+    function renderView(){
+      // Header title
+      screenTitle.textContent = (screen===Screens.ENG) ? "Engelska" : "Svenska";
+
+      // Show/hide areas based on mode
+      const isList = (mode===Modes.LIST || mode===Modes.MEANING);
+      listArea.style.display = isList ? "block" : "none";
+      inputRow.style.display = isList ? "none" : "flex";
+      actions.style.display = "grid";
+      promptEl.style.display = "flex";
+
+      if(isList){
+        // List/Meaning view
+        promptEl.textContent = "";
+        renderFlashcards();
+        renderActions(); // only Reset is in header; actions can be empty
+        setCounter(); // show 0/total effectively (we keep it)
+        return;
+      }
+
+      // Quiz view
+      listGrid.innerHTML = "";
+      const it = started ? currentItem() : null;
+
+      if(!started){
+        promptEl.textContent = "";
+      }else{
+        if(screen===Screens.ENG){
+          promptEl.textContent = it ? it.sv : "";
+          answerEl.placeholder = "Skriv på engelska";
+        }else{
+          promptEl.textContent = "Stava ordet";
+          answerEl.placeholder = "Skriv på svenska";
+        }
+      }
+
+      renderActions();
+      setCounter();
+    }
+
+    function renderFlashcards(){
+      listGrid.innerHTML = "";
+      const src = (screen===Screens.ENG) ? englishWords : swedishWords;
+
+      // For ENG LIST: show Swedish first, tap -> reveal English
+      // For SWE MEANING: show word, tap -> reveal meaning
+      src.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "flash";
+        card.dataset.revealed = "0";
+
+        let frontText = "";
+        let backText = "";
+        let tagFront = "";
+        let tagBack = "";
+
+        if(screen===Screens.ENG && mode===Modes.LIST){
+          frontText = item.sv;
+          backText = item.en;
+          tagFront = "SV";
+          tagBack = "EN";
+        }else{
+          // Swedish meaning
+          frontText = item.sv;
+          backText = item.meaning || "—";
+          tagFront = "ORD";
+          tagBack = "BETYDELSE";
+        }
+
+        card.innerHTML = `
+          <div class="txt">${frontText}</div>
+          <div class="tag">${tagFront}</div>
+        `;
+
+        card.onclick = () => {
+          const rev = card.dataset.revealed === "1";
+          card.dataset.revealed = rev ? "0" : "1";
+          card.classList.toggle("revealed", !rev);
+
+          const t = !rev ? backText : frontText;
+          const tag = !rev ? tagBack : tagFront;
+          card.querySelector(".txt").textContent = t;
+          card.querySelector(".tag").textContent = tag;
+
+          // Optional: speak in meaning mode to reinforce
+          if(screen===Screens.SWE && mode===Modes.MEANING){
+            speak(item.sv, "sv-SE");
+          }
+        };
+
+        listGrid.appendChild(card);
+      });
     }
 
     function renderActions(){
       actions.innerHTML = "";
 
-      // Start button when not started
+      // List modes: no quiz actions
+      if(mode===Modes.LIST || mode===Modes.MEANING){
+        // Keep grid empty to stay clean
+        actions.style.display = "none";
+        return;
+      }
+      actions.style.display = "grid";
+
       if(!started){
         const start = document.createElement("button");
         start.className = "btn";
@@ -546,17 +745,15 @@
         start.onclick = () => startRound();
         actions.appendChild(start);
 
-        const demo = document.createElement("button");
-        demo.className = "btn secondary";
-        demo.type = "button";
-        demo.textContent = "Testa ljud (låser upp)";
-        demo.onclick = () => { blip(true); speak("Hello", "en-US"); };
-        actions.appendChild(demo);
-
+        const unlock = document.createElement("button");
+        unlock.className = "btn secondary";
+        unlock.type = "button";
+        unlock.textContent = "Ljud";
+        unlock.onclick = () => { blip(true); speak("Hello", "en-US"); };
+        actions.appendChild(unlock);
         return;
       }
 
-      // Common buttons
       const submit = document.createElement("button");
       submit.className = "btn";
       submit.type = "button";
@@ -564,30 +761,30 @@
       submit.onclick = () => checkAnswer();
       actions.appendChild(submit);
 
-      if(screen === Screens.ENG){
+      if(screen===Screens.ENG){
         if(mode === Modes.TRAIN){
           const hint = document.createElement("button");
           hint.className = "btn secondary";
           hint.type = "button";
-          hint.textContent = "Ledtråd (2 bokstäver)";
-          hint.onclick = () => showHint();
+          hint.textContent = hintState.on ? hintState.text : "Ledtråd";
+          hint.classList.toggle("hintOn", hintState.on);
+          hint.onclick = () => toggleHint(hint);
           actions.appendChild(hint);
 
           const listen = document.createElement("button");
           listen.className = "btn ghost";
           listen.type = "button";
-          listen.textContent = "Lyssna (engelska)";
+          listen.textContent = "Lyssna";
           listen.onclick = () => listenEnglish();
           actions.appendChild(listen);
 
           const skip = document.createElement("button");
           skip.className = "btn ghost";
           skip.type = "button";
-          skip.textContent = "Nästa (kan inte)";
+          skip.textContent = "Nästa";
           skip.onclick = () => markSkipAndNext();
           actions.appendChild(skip);
         }else{
-          // Prov: inga ledtrådar eller ljudfiler.
           const next = document.createElement("button");
           next.className = "btn secondary";
           next.type = "button";
@@ -596,7 +793,6 @@
           actions.appendChild(next);
         }
       }else{
-        // Svenska prov: stor lyssna-knapp + rätta
         const listenSwe = document.createElement("button");
         listenSwe.className = "btn secondary";
         listenSwe.type = "button";
@@ -613,130 +809,50 @@
       }
     }
 
-    function renderPrompt(){
-      if(!started){
-        promptEl.textContent = "Tryck “Start”";
-        return;
-      }
+    /***************
+     * HINT FLIP (English training)
+     ***************/
+    function toggleHint(btn){
       const it = currentItem();
       if(!it) return;
-
-      if(screen === Screens.ENG){
-        // show Swedish word; user types English
-        promptEl.textContent = it.sv;
-        answerEl.placeholder = "Skriv på engelska";
+      if(!hintState.on){
+        const two = (it.en || "").slice(0,2).toUpperCase();
+        hintState.on = true;
+        hintState.text = `${two}…`;
+        btn.textContent = hintState.text;
+        btn.classList.add("hintOn");
       }else{
-        // Swedish spelling: show minimal prompt
-        promptEl.textContent = "Stava ordet";
-        answerEl.placeholder = "Skriv på svenska";
+        hintState.on = false;
+        hintState.text = "";
+        btn.textContent = "Ledtråd";
+        btn.classList.remove("hintOn");
       }
     }
 
     /***************
-     * 9) ROUND FLOW
+     * LISTEN
      ***************/
-    function buildRound(){
-      const source = (screen===Screens.ENG) ? englishWords : swedishWords;
-      round = shuffle(source);
-      idx = 0;
-      attemptsFirstTryOk = new Map();
-      misses = new Map();
-      firstAttemptThisWord = true;
-      setCounter();
-    }
-
-    function resetRound(){
-      started = false;
-      buildRound();
-      setStatus("", "Redo");
-      answerEl.value = "";
-      renderPills();
-      renderActions();
-      renderPrompt();
-      setCounter();
-      hideResults();
-    }
-
-    function startRound(){
-      ensureAudio(); // unlock on iOS
-      started = true;
-      if(round.length === 0) buildRound();
-      idx = 0;
-      firstAttemptThisWord = true;
-      setStatus("", "Skriv och tryck Rätta");
-      answerEl.value = "";
-      answerEl.focus();
-      renderActions();
-      renderPrompt();
-      setCounter();
-      if(screen===Screens.SWE){
-        // Swedish test: encourage listen
-        listenSwedish();
-      }
-    }
-
-    function nextWord(){
-      if(idx >= round.length-1){
-        finishRound();
-        return;
-      }
-      idx += 1;
-      firstAttemptThisWord = true;
-      answerEl.value = "";
-      answerEl.focus();
-      setStatus("", "Skriv och tryck Rätta");
-      renderPrompt();
-      setCounter();
-    }
-
-    function finishRound(){
-      started = false;
-      renderActions();
-      showResults();
-    }
-
-    /***************
-     * 10) ENGLISH TRAINING FEATURES
-     ***************/
-    function showHint(){
-      const it = currentItem();
-      if(!it) return;
-      const two = (it.en || "").slice(0,2);
-      setStatus("", `Ledtråd: ${two.toUpperCase()}...`);
-      // Keep input unchanged
-    }
-
     function listenEnglish(){
       const it = currentItem();
       if(!it) return;
       speak(it.en, "en-US");
     }
-
-    function markSkipAndNext(){
+    function listenSwedish(){
       const it = currentItem();
       if(!it) return;
-      const k = keyForItem(it);
-      // If skipped, count as not first-try ok, and as miss
-      if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
-      const m = misses.get(k) || { prompt: it.sv, correct: it.en, wrongs: 0 };
-      m.wrongs += 1;
-      misses.set(k, m);
-
-      setStatus("bad", "Hoppad");
-      blip(false);
-      nextWord();
+      speak(it.sv, "sv-SE");
     }
 
     /***************
-     * 11) CHECK ANSWER
+     * CHECK ANSWER
      ***************/
-    function checkAnswer(){
+    async function checkAnswer(){
       const it = currentItem();
       if(!it) return;
 
       const user = norm(answerEl.value);
       if(!user){
-        setStatus("bad", "Skriv ett svar");
+        setStatus("bad", "");
         blip(false);
         return;
       }
@@ -746,64 +862,80 @@
         const k = keyForItem(it);
 
         if(user === correct){
-          // first-try tracking
           if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, firstAttemptThisWord);
-          setStatus("ok", "Rätt");
+          setStatus("ok", "");
           blip(true);
 
-          // In provläge: read the word after correct answer
+          // Prov: read the word after correct answer (as before)
           if(mode === Modes.TEST){
             speak(it.en, "en-US");
           }
           nextWord();
         }else{
-          // Miss tracking
           if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
-
           const m = misses.get(k) || { prompt: it.sv, correct: it.en, wrongs: 0 };
           m.wrongs += 1;
           misses.set(k, m);
 
-          setStatus("bad", "Fel");
-          blip(false);
-          firstAttemptThisWord = false;
-
-          if(mode === Modes.TRAIN){
-            // In training, allow retry; do not auto-next
-            answerEl.select();
-          }else{
-            // In test, no hints; allow retry or move next; do not auto-next
-            answerEl.select();
-          }
-        }
-      }else{
-        // Swedish spelling test
-        const correct = norm(it.sv);
-        const k = keyForItem(it);
-
-        if(user === correct){
-          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, firstAttemptThisWord);
-          setStatus("ok", "Rätt");
-          blip(true);
-          // Optional: read correct word after correct
-          speak(it.sv, "sv-SE");
-          nextWord();
-        }else{
-          if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
-          const m = misses.get(k) || { prompt: "Lyssna och stava", correct: it.sv, wrongs: 0 };
-          m.wrongs += 1;
-          misses.set(k, m);
-
-          setStatus("bad", "Fel");
+          setStatus("bad", "");
           blip(false);
           firstAttemptThisWord = false;
           answerEl.select();
         }
+        return;
+      }
+
+      // Swedish TEST: no "read correct word" after correct
+      const correct = norm(it.sv);
+      const k = keyForItem(it);
+
+      if(user === correct){
+        if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, firstAttemptThisWord);
+        setStatus("ok", "");
+        blip(true);
+
+        // After correct: 1s -> "Nästa ord" -> 0.5s -> speak NEXT word
+        const hasNext = (idx < round.length - 1);
+        if(hasNext){
+          await delay(1000);
+          speak("Nästa ord", "sv-SE");
+          await delay(500);
+          nextWord(); // move to next
+          const nxt = currentItem();
+          if(nxt) speak(nxt.sv, "sv-SE");
+        }else{
+          // last word -> finish after short pause
+          await delay(500);
+          finishRound();
+        }
+      }else{
+        if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
+        const m = misses.get(k) || { prompt: "Stavning", correct: it.sv, wrongs: 0 };
+        m.wrongs += 1;
+        misses.set(k, m);
+
+        setStatus("bad", "");
+        blip(false);
+        firstAttemptThisWord = false;
+        answerEl.select();
       }
     }
 
+    function markSkipAndNext(){
+      const it = currentItem();
+      if(!it) return;
+      const k = keyForItem(it);
+      if(!attemptsFirstTryOk.has(k)) attemptsFirstTryOk.set(k, false);
+      const m = misses.get(k) || { prompt: it.sv, correct: it.en, wrongs: 0 };
+      m.wrongs += 1;
+      misses.set(k, m);
+      setStatus("bad", "");
+      blip(false);
+      nextWord();
+    }
+
     /***************
-     * 12) RESULTS + RECORDS
+     * RESULTS + RECORDS (only quiz modes)
      ***************/
     function getBestKey(){
       return (screen===Screens.ENG) ? LS.engBest : LS.sweBest;
@@ -813,9 +945,13 @@
     }
 
     function showResults(){
-      // Summary: which words not correct on first attempt
-      const total = round.length;
-      let firstTryFails = [];
+      // Only show if quiz mode and a round actually ran
+      if(mode===Modes.LIST || mode===Modes.MEANING) return;
+
+      const total = round.length || 0;
+      if(total === 0) return;
+
+      const firstTryFails = [];
       for(const it of round){
         const k = keyForItem(it);
         const okFirst = attemptsFirstTryOk.get(k) === true;
@@ -828,40 +964,32 @@
         }
       }
 
-      // Score for record (test mode only for ENG; always for SWE)
-      const isRecordRelevant = (screen===Screens.SWE) || (screen===Screens.ENG && mode===Modes.TEST);
-
       const wrongCountUnique = firstTryFails.length;
       const correctFirstTry = total - wrongCountUnique;
 
-      // Update best record (higher correctFirstTry)
+      const isRecordRelevant = (screen===Screens.SWE) || (screen===Screens.ENG && mode===Modes.TEST);
       let best = Number(localStorage.getItem(getBestKey()) || "0");
       if(isRecordRelevant && correctFirstTry > best){
         best = correctFirstTry;
         localStorage.setItem(getBestKey(), String(best));
       }
-
-      // Perfect tracking (0 fails)
       const perfect = (wrongCountUnique === 0);
       if(isRecordRelevant && perfect){
         const c = Number(localStorage.getItem(getPerfectKey()) || "0") + 1;
         localStorage.setItem(getPerfectKey(), String(c));
       }
 
-      // UI
       overlay.classList.add("show");
       overlay.setAttribute("aria-hidden","false");
 
-      const part = (screen===Screens.ENG) ? "Engelska" : "Svenska";
-      const modeTxt = (screen===Screens.ENG) ? (mode===Modes.TRAIN ? "Träning" : "Prov") : "Prov";
-      resultTitle.textContent = `${part} – ${modeTxt}`;
-      resultMeta.textContent = `Klara på första försöket: ${correctFirstTry}/${total}`;
+      resultTitle.textContent = (screen===Screens.ENG ? "Engelska" : "Svenska");
+      resultMeta.textContent = `${correctFirstTry}/${total}`;
 
       resultList.innerHTML = "";
       if(firstTryFails.length === 0){
         const r = document.createElement("div");
         r.className = "row";
-        r.innerHTML = `<span>Inga missar 🎉</span><span class="small">Felfritt</span>`;
+        r.innerHTML = `<span>Inga missar</span><span class="small">Felfritt</span>`;
         resultList.appendChild(r);
       }else{
         for(const x of firstTryFails){
@@ -874,11 +1002,10 @@
 
       const bestNow = Number(localStorage.getItem(getBestKey()) || "0");
       const perfectCount = Number(localStorage.getItem(getPerfectKey()) || "0");
-      const recordLabel = (screen===Screens.ENG && mode===Modes.TRAIN)
-        ? `Rekord visas bara för provläget.`
-        : `Rekord: ${bestNow}/${total} • Felfritt klarat: ${perfectCount} gång(er)`;
-
-      recordsEl.textContent = recordLabel;
+      recordsEl.textContent =
+        (screen===Screens.ENG && mode===Modes.TRAIN)
+          ? ""
+          : `Rekord: ${bestNow}/${total} • Felfritt: ${perfectCount}`;
     }
 
     function hideResults(){
@@ -887,21 +1014,15 @@
     }
 
     /***************
-     * 13) SWEDISH LISTEN
+     * EVENTS
      ***************/
-    function listenSwedish(){
-      const it = currentItem();
-      if(!it) return;
-      speak(it.sv, "sv-SE");
-    }
+    btnReset.addEventListener("click", () => resetRound());
+    btnClose.addEventListener("click", () => hideResults());
+    btnPlayAgain.addEventListener("click", () => { hideResults(); resetRound(); startRound(); });
 
-    /***************
-     * 14) EVENTS
-     ***************/
     tabEng.addEventListener("click", () => {
       screen = Screens.ENG;
       mode = Modes.TRAIN;
-      screenTitle.textContent = "Engelska";
       tabEng.classList.add("active");
       tabSwe.classList.remove("active");
       resetRound();
@@ -909,19 +1030,12 @@
 
     tabSwe.addEventListener("click", () => {
       screen = Screens.SWE;
-      // Only test mode here
       mode = Modes.TEST;
-      screenTitle.textContent = "Svenska";
       tabSwe.classList.add("active");
       tabEng.classList.remove("active");
       resetRound();
     });
 
-    btnReset.addEventListener("click", () => resetRound());
-    btnClose.addEventListener("click", () => hideResults());
-    btnPlayAgain.addEventListener("click", () => { hideResults(); resetRound(); startRound(); });
-
-    // Enter to submit
     answerEl.addEventListener("keydown", (e) => {
       if(e.key === "Enter"){
         e.preventDefault();
@@ -929,16 +1043,12 @@
       }
     });
 
-    // Prevent paste (extra anti-cheat)
-    answerEl.addEventListener("paste", (e) => e.preventDefault());
-
-    // init
+    /***************
+     * INIT
+     ***************/
     (function init(){
+      setStatus("", "");
       resetRound();
-      // Ensure correct input hardening always
-      hardenInput(answerEl);
-      // Make sure the prompt stays compact for iPhone
-      promptEl.textContent = "Tryck “Start”";
     })();
   </script>
 </body>
