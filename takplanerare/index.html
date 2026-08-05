@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Takplanerare</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">TP</div><div><h1>Takplanerare</h1><div class="sub">Hammarband, takstolar, råspont och spill</div></div></div>
+    <div class="toolbar noPrint">
+      <button class="btn secondary" id="saveBtn">Spara</button>
+      <button class="btn secondary" id="exportBtn">Exportera</button>
+      <button class="btn secondary" id="importBtn">Importera</button>
+      <button class="btn" id="printBtn">Skriv ut / PDF</button>
+      <input class="hide" id="fileInput" type="file" accept="application/json" />
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="stack controls">
+      <div class="card">
+        <h2>1. Geometri</h2>
+        <div class="formGrid">
+          <div class="field"><label>Hammarband (mm)</label><input id="beam" type="number" min="500" step="5"></div>
+          <div class="field"><label>Takstolsbredd (mm)</label><input id="rafterWidth" type="number" min="20" step="1"></div>
+          <div class="field"><label>Utsprång vänster (mm)</label><input id="overL" type="number" min="0" step="5"></div>
+          <div class="field"><label>Utsprång höger (mm)</label><input id="overR" type="number" min="0" step="5"></div>
+          <div class="field"><label>Takfall nock–fot (mm)</label><input id="slope" type="number" min="200" step="10"></div>
+          <div class="field"><label>Antal takfall</label><select id="sides"><option value="1">1</option><option value="2">2</option></select></div>
+          <div class="field"><label>Antal takstolar</label><input id="rafterCount" type="number" min="2" max="20" step="1"></div>
+          <div class="field"><label>Mätreferens för skarv</label><select id="supportRef"><option value="left">Vänsterkant</option><option value="center">Centrum</option><option value="right">Högerkant</option></select></div>
+          <div class="field full"><label><input id="lockEnds" type="checkbox" style="width:auto;margin-right:6px">Lås första och sista takstolen i hammarbandets ändar</label></div>
+        </div>
+        <div class="rowBtns">
+          <button class="btn secondary small" id="equalBtn">Fördela jämnt</button>
+          <button class="btn secondary small" id="fitBtn">Anpassa till hel materiallängd</button>
+          <button class="btn secondary small" id="addRafterBtn">+ Takstol</button>
+          <button class="btn warn small" id="removeRafterBtn">− Takstol</button>
+        </div>
+        <div class="hint">Dra takstolarna i ritningen. Ett kort tryck på en takstol växlar skarv för aktivt mönster A eller B.</div>
+      </div>
+
+      <div class="card">
+        <h2>2. Material</h2>
+        <div class="seg" aria-label="Materialtyp"><button id="panelMode">Råspontslucka</button><button id="looseMode">Lösvirke</button></div>
+        <div class="formGrid" style="margin-top:10px">
+          <div class="field"><label>Inköpslängd (mm)</label><select id="stockLength"><option>3600</option><option>3900</option><option>4200</option><option>4800</option><option>5100</option><option>5400</option></select></div>
+          <div class="field"><label id="coverLabel">Täckbredd lucka (mm)</label><input id="coverWidth" type="number" min="20" step="1"></div>
+          <div class="field"><label>Pris per löpmeter (kr)</label><input id="priceLm" type="number" min="0" step="0.1"></div>
+          <div class="field"><label>Snäppning (mm)</label><select id="snap"><option>1</option><option>5</option><option>10</option><option>25</option><option>50</option></select></div>
+        </div>
+        <div class="rowBtns">
+          <button class="btn" id="optimizeBtn">Optimera skarvmönster</button>
+          <button class="btn secondary" id="clearSeamsBtn">Rensa skarvar</button>
+        </div>
+        <h3>Aktivt mönster</h3>
+        <div class="seg"><button id="patternABtn">Mönster A</button><button id="patternBBtn">Mönster B</button></div>
+      </div>
+
+      <div class="card">
+        <h2>3. Takstolsplacering</h2>
+        <div class="tableWrap"><table><thead><tr><th>Nr</th><th>Vänsterkant</th><th>Centrum</th><th>A</th><th>B</th></tr></thead><tbody id="rafterRows"></tbody></table></div>
+        <div class="footerNote">Alla mått räknas från hammarbandets vänstra ände. Skarven räknas som godkänd när den ligger över takstolens bredd.</div>
+      </div>
+    </section>
+
+    <section class="stack">
+      <div class="card drawingCard">
+        <div class="drawingHead">
+          <div><h2 style="margin:0 0 4px">Ritning ovanifrån</h2><div class="legend"><span><i style="background:#b7793f"></i>Hammarband</span><span><i style="background:#475569"></i>Takstol</span><span><i style="background:#bfdbfe"></i>Mönster A</span><span><i style="background:#fde68a"></i>Mönster B</span></div></div>
+          <div class="pill" id="validationPill">Kontrollerar…</div>
+        </div>
+        <div class="drawingWrap"><svg id="drawing" viewBox="-800 0 7800 670" role="img" aria-label="Måttsatt takritning"></svg></div>
+      </div>
+
+      <div class="card">
+        <h2>Materialsammanställning</h2>
+        <div class="statusGrid">
+          <div class="metric"><b id="roofLengthMetric">0</b><span>Total taklängd</span></div>
+          <div class="metric"><b id="rowsMetric">0</b><span>Rader totalt</span></div>
+          <div class="metric"><b id="stockMetric">0</b><span>Inköpta längder</span></div>
+          <div class="metric"><b id="wasteMetric">0</b><span>Spill</span></div>
+          <div class="metric"><b id="costMetric">0</b><span>Beräknad kostnad</span></div>
+        </div>
+        <div class="tableWrap" style="margin-top:12px"><table><thead><tr><th>Uppgift</th><th>Värde</th></tr></thead><tbody id="summaryRows"></tbody></table></div>
+      </div>
+
+      <div class="card">
+        <h2>Kaplista och spillbitar</h2>
+        <div class="tableWrap cutList"><table><thead><tr><th>Inköpsbit</th><th>Kapmått</th><th>Rest</th></tr></thead><tbody id="cutRows"></tbody></table></div>
+        <div class="footerNote">Kapoptimeringen använder en best-fit-heuristik och återanvänder spillbitar mellan rader med samma materialbredd. Kontrollera alltid verkliga mått före kapning.</div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
