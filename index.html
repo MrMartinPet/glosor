@@ -381,22 +381,46 @@
 
     // Betydelserna är korta och barnvänliga – kan justeras om du vill.
     const swedishWords = [
-      { sv: "abborre", meaning: "en fisk" },
-      { sv: "alltid", meaning: "varje gång" },
-      { sv: "annorlunda", meaning: "inte som vanligt" },
-      { sv: "definitivt", meaning: "helt säkert" },
-      { sv: "egentligen", meaning: "i själva verket" },
-      { sv: "intresserad", meaning: "nyfiken på, vill veta mer" },
-      { sv: "parallell", meaning: "bredvid och i samma riktning" },
-      { sv: "restaurang", meaning: "ställe där man kan äta mat" },
-      { sv: "rekommendera", meaning: "tipsa, säga att något är bra" },
-      { sv: "skillnad", meaning: "det som gör att det inte är samma" },
-      { sv: "kommitté", meaning: "en liten grupp som bestämmer något" },
-      { sv: "medicin", meaning: "något man tar när man är sjuk" },
-      { sv: "tycker", meaning: "har en åsikt" },
-      { sv: "tyvärr", meaning: "tråkigt nog" },
-      { sv: "också", meaning: "även" },
-      { sv: "nämligen", meaning: "för att… (en förklaring)" }
+      {
+        "sv": "regering",
+        "meaning": "Styr landet och ser till att riksdagens beslut genomförs."
+      },
+      {
+        "sv": "riksdag",
+        "meaning": "Folkvalda politiker som beslutar om lagar och statens pengar."
+      },
+      {
+        "sv": "lagstiftning",
+        "meaning": "Att skapa eller ändra lagar."
+      },
+      {
+        "sv": "censur",
+        "meaning": "När en makthavare granskar och stoppar information som människor vill sprida."
+      },
+      {
+        "sv": "statschef",
+        "meaning": "En person som representerar ett land, till exempel en kung eller president."
+      },
+      {
+        "sv": "släktträd",
+        "meaning": "En bild som visar hur personer är släkt med varandra."
+      },
+      {
+        "sv": "sjöstjärna",
+        "meaning": "Ett djur som lever i havet, saknar ryggrad och ofta har fem armar."
+      },
+      {
+        "sv": "ryggradslös",
+        "meaning": "Saknar ryggrad, som till exempel en mask eller insekt."
+      },
+      {
+        "sv": "växelvarm",
+        "meaning": "Kroppstemperaturen ändras med temperaturen i omgivningen, som hos en ödla."
+      },
+      {
+        "sv": "däggdjur",
+        "meaning": "Djur vars ungar dricker mjölk från sin mamma, till exempel människor, hundar och valar."
+      }
     ];
 
     /***************
@@ -422,8 +446,8 @@
     const LS = {
       engBest: "glosapp_eng_best",
       engPerfectCount: "glosapp_eng_perfect_count",
-      sweBest: "glosapp_swe_best",
-      swePerfectCount: "glosapp_swe_perfect_count",
+      sweBest: "glosapp_swe_2026_v38_best",
+      swePerfectCount: "glosapp_swe_2026_v38_perfect_count",
     };
 
     /***************
@@ -634,7 +658,7 @@
 
     function renderView(){
       // Header title
-      screenTitle.textContent = (screen===Screens.ENG) ? "Engelska" : "Svenska";
+      screenTitle.textContent = (screen===Screens.ENG) ? "Engelska" : "Svenska v. 38";
 
       // Show/hide areas based on mode
       const isList = (mode===Modes.LIST || mode===Modes.MEANING);
